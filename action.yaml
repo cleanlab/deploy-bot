@@ -1,0 +1,67 @@
+name: "ryansingman/deploy-bot"
+description: "Deployment merge handler."
+author: "Ryan Singman @ Cleanlab"
+inputs:
+  source:
+    description: source branch to create merge from
+    required: false
+    default: "staging"
+  target:
+    description: target branch to merge into
+    required: false
+    default: "main"
+  pr_body:
+    description: contents of body of PR
+    required: false
+    default: ":robot: *Automated PR for daily deployment* :robot:"
+
+runs:
+  using: composite
+  steps:
+    # checkout <source> branch of repo
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ inputs.source }}
+
+    # install Python dependencies for action
+    - run: |
+        pip install -r $GITHUB_ACTION_PATH/requirements.txt
+      shell: bash
+        
+    # set date str
+    - run: |
+        echo "DATE=$(date +'%m-%d-%Y')" >> $GITHUB_ENV
+      shell: bash
+
+    # name deployment branch
+    - run: |
+        echo "DEPLOYMENT_BRANCH=deployment/${{ env.DATE }}" >> $GITHUB_ENV
+      shell: bash
+
+    # create deployment branch off of source branch
+    # named deployment_{date}
+    - run: |
+        git checkout -b ${{ env.DEPLOYMENT_BRANCH }} \
+        && git push --set-upstream origin ${{ env.DEPLOYMENT_BRANCH }}
+      shell: bash
+
+    # get list of reviewers for PR
+    - run: |
+        git fetch \
+        && echo "REVIEWERS=$( \
+            python $GITHUB_ACTION_PATH/deploy_bot/get_reviewers.py \
+            --base-branch=origin/${{ env.DEPLOYMENT_BRANCH }} \
+            --target-branch=origin/${{ inputs.target }} \
+        )" >> $GITHUB_ENV
+      shell: bash
+
+    # create PR to target branch from deployment branch
+    - uses: repo-sync/pull-request@v2
+      with:
+        source_branch: ${{ env.DEPLOYMENT_BRANCH }}
+        destination_branch: ${{ inputs.target }}
+        pr_title: "Deployment: ${{ env.DATE }}"
+        pr_body: ${{ inputs.pr_body }}
+        pr_allow_empty: false
+        pr_reviewer: ${{ env.REVIEWERS }}
+        github_token: ${{ github.token }}
