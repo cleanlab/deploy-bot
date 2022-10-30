@@ -14,6 +14,10 @@ inputs:
     description: contents of body of PR
     required: false
     default: ":robot: *Automated PR for daily deployment* :robot:"
+  pr_label:
+    description: labels for PR, as comma-separated list
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -62,6 +66,7 @@ runs:
         destination_branch: ${{ inputs.target }}
         pr_title: "Deployment: ${{ env.DATE }}"
         pr_body: ${{ inputs.pr_body }}
+        pr_labels: ${{ inputs.pr_label }}
         pr_allow_empty: false
         pr_reviewer: ${{ env.REVIEWERS }}
         github_token: ${{ github.token }}
