@@ -16,7 +16,7 @@ on:
 jobs:
     deploy:
         steps:
-            - uses: ryansingman/deploy-bot@1.0.0
+            - uses: cleanlab/deploy-bot@1.0.0
               with:
                 source: staging
                 target: main
