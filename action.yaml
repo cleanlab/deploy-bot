@@ -51,11 +51,12 @@ runs:
 
     # get list of reviewers for PR
     - run: |
-        git fetch \
-        && echo "REVIEWERS=$( \
+        echo "REVIEWERS=$( \
+            GITHUB_TOKEN=${{ github.token }} \
             python $GITHUB_ACTION_PATH/deploy_bot/get_reviewers.py \
-            --base-branch=origin/${{ env.DEPLOYMENT_BRANCH }} \
-            --target-branch=origin/${{ inputs.target }} \
+            --repository ${{ github.repository }} \
+            --head-branch=${{ env.DEPLOYMENT_BRANCH }} \
+            --base-branch=${{ inputs.target }} \
         )" >> $GITHUB_ENV
       shell: bash
 
