@@ -49,13 +49,19 @@ if __name__ == "__main__":
         dest="base_branch",
         help="base branch for comparison",
     )
+    parser.add_argument(
+        "--required-reviewers",
+        dest="required_reviewers",
+        help="list of required reviewers, as comma separated list"
+    )
 
     args = parser.parse_args()
 
     # find contributors to branch
     contributors: Set[str] = find_contributors_to_branch(args.repository, args.head_branch, args.base_branch)
 
-    # output contributors as comma delimited list
-    print(",".join(contributors))
+    # output reviewers as comma delimited list
+    reviewers = contributors + required_reviewers.split(",")
+    print(",".join(reviewers))
 
     exit(0)

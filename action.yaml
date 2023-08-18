@@ -18,6 +18,10 @@ inputs:
     description: labels for PR, as comma-separated list
     required: false
     default: ""
+  required_reviewers:
+    description: reviewers required for all PRs
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -57,6 +61,7 @@ runs:
             --repository ${{ github.repository }} \
             --head-branch=${{ env.DEPLOYMENT_BRANCH }} \
             --base-branch=${{ inputs.target }} \
+            --required-reviewers=${{ inputs.required_reviewers }} \
         )" >> $GITHUB_ENV
       shell: bash
 
