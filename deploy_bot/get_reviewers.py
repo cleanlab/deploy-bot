@@ -61,7 +61,7 @@ if __name__ == "__main__":
     contributors: Set[str] = find_contributors_to_branch(args.repository, args.head_branch, args.base_branch)
 
     # output reviewers as comma delimited list
-    reviewers = contributors + args.required_reviewers.split(",")
+    reviewers = contributors | set(args.required_reviewers.split(","))
     print(",".join(reviewers))
 
     exit(0)
