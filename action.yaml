@@ -18,6 +18,10 @@ inputs:
     description: labels for PR, as comma-separated list
     required: false
     default: ""
+  should_add_reviewers:
+    description: whether to add reviewers to PR
+    required: false
+    default: "true"
   required_reviewers:
     description: reviewers required for all PRs
     required: false
@@ -62,6 +66,7 @@ runs:
             --head-branch=${{ env.DEPLOYMENT_BRANCH }} \
             --base-branch=${{ inputs.target }} \
             --required-reviewers=${{ inputs.required_reviewers }} \
+            --should-add-reviewers=${{ inputs.should_add_reviewers }} \
         )" >> $GITHUB_ENV
       shell: bash
 

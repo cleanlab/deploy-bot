@@ -2,6 +2,7 @@ import os
 from typing import Dict, List, Set
 
 import requests
+from six import b
 
 
 GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN")
@@ -50,6 +51,12 @@ if __name__ == "__main__":
         help="base branch for comparison",
     )
     parser.add_argument(
+        "--should-add-reviewers",
+        dest="should_add_reviewers",
+        help="if should add reviewers to PR",
+        type=bool,
+    )
+    parser.add_argument(
         "--required-reviewers",
         dest="required_reviewers",
         help="list of required reviewers, as comma separated list"
@@ -57,11 +64,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # find contributors to branch
-    contributors: Set[str] = find_contributors_to_branch(args.repository, args.head_branch, args.base_branch)
+    if args.should_add_reviewers:
+        # find contributors to branch
+        contributors: Set[str] = find_contributors_to_branch(args.repository, args.head_branch, args.base_branch)
 
-    # output reviewers as comma delimited list
-    reviewers = contributors | set(args.required_reviewers.split(","))
-    print(",".join(reviewers))
+        # output reviewers as comma delimited list
+        reviewers = contributors | set(args.required_reviewers.split(","))
+        print(",".join(reviewers))
 
     exit(0)
