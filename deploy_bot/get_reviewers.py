@@ -31,6 +31,11 @@ def find_contributors_to_branch(repository: str, head_branch: str, base_branch: 
     return {commit.get("author").get("login") for commit in commits}
 
 
+def cast_bool_arg(val: str) -> bool:
+    """Casts value from argparse to bool."""
+    return val.lower() == "true"
+
+
 if __name__ == "__main__":
 
     import argparse
@@ -54,7 +59,7 @@ if __name__ == "__main__":
         "--should-add-reviewers",
         dest="should_add_reviewers",
         help="if should add reviewers to PR",
-        type=bool,
+        type=cast_bool_arg,
     )
     parser.add_argument(
         "--required-reviewers",
