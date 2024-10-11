@@ -2,7 +2,6 @@ import os
 from typing import Dict, List, Set
 
 import requests
-from six import b
 
 
 GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN")
