@@ -35,6 +35,16 @@ runs:
       with:
         ref: ${{ inputs.source }}
 
+    - uses: actions/setup-python@v4
+      with:
+        cache: "pip" # caching pip dependencies
+
+    - name: Create virtualenv
+      run: |
+        python -m venv ~/.venv
+        . ~/.venv/bin/activate
+        echo PATH=$PATH >> $GITHUB_ENV
+
     # install Python dependencies for action
     - run: |
         pip install -r $GITHUB_ACTION_PATH/requirements.txt
