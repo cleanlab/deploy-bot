@@ -26,6 +26,10 @@ inputs:
     description: reviewers required for all PRs
     required: false
     default: ""
+  token:
+    description: GitHub token for creating PRs (defaults to github.token)
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -71,7 +75,7 @@ runs:
     # get list of reviewers for PR
     - run: |
         echo "REVIEWERS=$( \
-            GITHUB_TOKEN=${{ github.token }} \
+            GITHUB_TOKEN=${{ inputs.token || github.token }} \
             python $GITHUB_ACTION_PATH/deploy_bot/get_reviewers.py \
             --repository ${{ github.repository }} \
             --head-branch=${{ env.DEPLOYMENT_BRANCH }} \
@@ -91,4 +95,4 @@ runs:
         pr_label: ${{ inputs.pr_label }}
         pr_allow_empty: false
         pr_reviewer: ${{ env.REVIEWERS }}
-        github_token: ${{ github.token }}
+        github_token: ${{ inputs.token || github.token }}
